@@ -33,14 +33,11 @@ public class App {
 
         // Удобный и понятный вывод в консоль
         for (Map.Entry<String, Long> e : map.entrySet()) {
-            if (TimeUnit.MILLISECONDS.toHours(e.getValue()) > 30) {
-                map.put(e.getKey(), 0L);
-            }
             System.out.println(String.format("%s : %s h, %s m, %s s",
                     e.getKey(),
-                    TimeUnit.MILLISECONDS.toHours(e.getValue()),
-                    TimeUnit.MILLISECONDS.toMinutes(e.getValue() / 10),
-                    TimeUnit.MILLISECONDS.toSeconds(e.getValue() / 1000)));
+                    e.getValue() / 1000 / 3600,
+                    e.getValue() / 1000 / 60 % 60,
+                    e.getValue() / 1000 % 60));
         }
 
         List<Integer> prices = new ArrayList<>();
@@ -54,18 +51,24 @@ public class App {
 
     private static Map<String, Long> getMinCompaniesTime(TicketInfo[] ticketInfos) {
 
-        // Имя компании | минимальное время прилёта в миллисекундах
+        // Имя компании | минимальное время полёта в миллисекундах
         Map<String, Long> companiesTime = new HashMap<>();
 
         for (TicketInfo t : ticketInfos) {
-            // Получение даты прилёта из t
-            Date date = new Date(t.getArrival_date().replace('.', '/').concat(" ").concat(t.getArrival_time()));
+            // Получение даты вылета из Владивостока
+            Date departure_date = new Date(t.getDeparture_date().replace('.', '/').concat(" ").concat(t.getDeparture_time()));
 
-            // Проверка, если мапа содержит имя компании t, то при условии, если время прилёта в мапе больше времени прилёта t, обновляем значение в мапе
+            // Получение даты прилёта в Тель-Авив
+            Date arrival_date = new Date(t.getArrival_date().replace('.', '/').concat(" ").concat(t.getArrival_time()));
+
+            // Время полёта
+            long flight_time = arrival_date.getTime() - departure_date.getTime();
+
+            // Проверка, если имеющееся время полёта в мапе больше, чем текущее, то обновляем лежащее в мапе
             if (!companiesTime.containsKey(t.getCarrier())) {
-                companiesTime.put(t.getCarrier(), date.getTime());
-            } else if (companiesTime.get(t.getCarrier()) > date.getTime()) {
-                companiesTime.put(t.getCarrier(), companiesTime.get(t.getCarrier()) - date.getTime());
+                companiesTime.put(t.getCarrier(), flight_time);
+            } else if (companiesTime.get(t.getCarrier()) > flight_time) {
+                companiesTime.put(t.getCarrier(), flight_time);
             }
         }
 
