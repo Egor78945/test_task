@@ -1,6 +1,8 @@
 package org.test.application;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.test.application.models.TicketInfo;
+import org.test.application.models.Tickets;
 
 import java.io.File;
 import java.io.IOException;

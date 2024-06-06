@@ -1,4 +1,4 @@
-package org.test.application;
+package org.test.application.models;
 
 public class Tickets {
     private TicketInfo[] tickets;
