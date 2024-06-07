@@ -46,7 +46,10 @@ public class App {
         Arrays.stream(tickets.getTickets()).forEach(e -> prices.add(e.getPrice()));
 
         // Вывод разности среднего значения и медианы
-        System.out.println(String.format("Difference between average price and median price : %s", getAveragePrice(prices) - getMedianPrice(prices)));
+        Map<String, Integer> differences = getAvgMedDifference(tickets.getTickets());
+        for (Map.Entry<String, Integer> m : differences.entrySet()) {
+            System.out.println(String.format("Difference between average and median of prices of %s : %s", m.getKey(), m.getValue()));
+        }
     }
 
     private static Map<String, Long> getMinCompaniesTime(TicketInfo[] ticketInfos) {
@@ -88,5 +91,24 @@ public class App {
 
     private static int getAveragePrice(List<Integer> prices) {
         return prices.stream().reduce((ac, i) -> ac += i).map(i -> i / prices.size()).get();
+    }
+
+    private static Map<String, Integer> getAvgMedDifference(TicketInfo[] ticketInfos) {
+        Map<String, List<Integer>> map = new HashMap<>();
+        for (TicketInfo t : ticketInfos) {
+            List<Integer> list;
+            if (!map.containsKey(t.getCarrier())) {
+                list = new ArrayList<>();
+            } else {
+                list = map.get(t.getCarrier());
+            }
+            list.add(t.getPrice());
+            map.put(t.getCarrier(), list);
+        }
+        Map<String, Integer> result = new HashMap<>();
+        for (Map.Entry<String, List<Integer>> m : map.entrySet()) {
+            result.put(m.getKey(), getAveragePrice(m.getValue()) - getMedianPrice(m.getValue()));
+        }
+        return result;
     }
 }
