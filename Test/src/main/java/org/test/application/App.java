@@ -82,7 +82,7 @@ public class App {
         if (prices.size() % 2 == 0) {
             return (prices.get(prices.size() / 2) + prices.get(prices.size() / 2 - 1)) / 2;
         } else {
-            return prices.get((prices.size() - 1) / 2);
+            return prices.get(prices.size() / 2);
         }
     }
 
