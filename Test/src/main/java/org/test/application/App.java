@@ -29,8 +29,15 @@ public class App {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+
+        // Получение всех рейсов из Владивостока в Тель-Авив
+        List<TicketInfo> ticketInfoArray = Arrays
+                .stream(tickets.getTickets())
+                .filter(t -> t.getOrigin()
+                        .equals("VVO") && t.getDestination().equals("TLV")).collect(Collectors.toList());
+
         // Получение самых коротких полётов для каждой компании
-        Map<String, Long> map = getMinCompaniesTime(tickets.getTickets());
+        Map<String, Long> map = getMinCompaniesTime(ticketInfoArray);
 
         // Удобный и понятный вывод в консоль
         for (Map.Entry<String, Long> e : map.entrySet()) {
@@ -58,7 +65,7 @@ public class App {
         System.out.println("Разница средней ценой и медианы: " + (avgPrice - median));
     }
 
-    private static Map<String, Long> getMinCompaniesTime(TicketInfo[] ticketInfos) {
+    private static Map<String, Long> getMinCompaniesTime(List<TicketInfo> ticketInfos) {
 
         // Имя компании | минимальное время полёта в миллисекундах
         Map<String, Long> companiesTime = new HashMap<>();
