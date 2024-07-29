@@ -6,6 +6,7 @@ import org.test.application.models.Tickets;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.Duration;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -69,8 +70,8 @@ public class App {
             // Получение даты прилёта в Тель-Авив
             Date arrival_date = new Date(t.getArrival_date().replace('.', '/').concat(" ").concat(t.getArrival_time()));
 
-            // Время полёта
-            long flight_time = arrival_date.getTime() - departure_date.getTime();
+            // Рассчёт времени полёта
+            long flight_time = Duration.between(departure_date.toInstant(), arrival_date.toInstant()).toMillis();
 
             // Проверка, если имеющееся время полёта в мапе больше, чем текущее, то обновляем лежащее в мапе
             if (!companiesTime.containsKey(t.getCarrier())) {
